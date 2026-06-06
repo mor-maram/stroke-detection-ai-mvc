@@ -1,0 +1,245 @@
+﻿@model IEnumerable<Doctor>
+@inject IStringLocalizer<MediAI.Resources.Doctor.Resources> Localizer
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-user-md me-2"></i>@Localizer["manage_doctors"]</h1>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addDoctorModal">
+            <i class="fas fa-plus me-1"></i> @Localizer["add_new_doctor"]
+        </button>
+    </div>
+
+    <!-- Modal: Add Doctor -->
+    <div class="modal fade" id="addDoctorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["add_new_doctor"]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addDoctorForm" autocomplete="off">
+                    <div class="modal-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">@Localizer["first_name"]</label>
+                                <input type="text" class="form-control" name="FirstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">@Localizer["last_name"]</label>
+                                <input type="text" class="form-control" name="LastName" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">@Localizer["email"]</label>
+                                <input type="email" class="form-control" name="Email" required autocomplete="new-email">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">@Localizer["password"]</label>
+                                <input type="password" class="form-control" name="password" required autocomplete="new-password">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">@Localizer["confirm_password"]</label>
+                                <input type="password" class="form-control" name="passwordConfirm" required autocomplete="new-password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["cancel"]</button>
+                        <button type="submit" class="btn btn-primary">@Localizer["save"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Doctor -->
+    <div class="modal fade" id="editDoctorModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["edit_doctor"]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editDoctorForm" autocomplete="off">
+                    <div class="modal-body">
+                        <input type="hidden" id="editDoctorId" name="Id">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">@Localizer["first_name"]</label>
+                                <input type="text" class="form-control" id="editFirstName" name="FirstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">@Localizer["last_name"]</label>
+                                <input type="text" class="form-control" id="editLastName" name="LastName" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">@Localizer["email"]</label>
+                                <input type="email" class="form-control" id="editEmail" name="Email" required autocomplete="new-email">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["cancel"]</button>
+                        <button type="submit" class="btn btn-warning">@Localizer["update"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctors Table -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="doctorsTable" class="table table-hover" style="width:100%">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Localizer["image"]</th>
+                            <th class="text-center">@Localizer["name"]</th>
+                            <th class="text-center">@Localizer["email"]</th>
+                            <th class="text-center">@Localizer["status"]</th>
+                            <th class="text-center">@Localizer["actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var doctor in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <img src="/imgs/doctor.png" class="rounded-circle" width="40" height="40" alt="Doctor">
+                                </td>
+                                <td class="text-center">@($"{doctor.FirstName} {doctor.LastName}")</td>
+                                <td class="text-center">@doctor.Email</td>
+                                <td class="text-center">
+                                    <span class="badge @(doctor.IsActive ? "bg-success" : "bg-secondary")">
+                                        @Localizer[doctor.IsActive ? "active" : "inactive"]
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-info view-btn" data-id="@doctor.Id">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning edit-btn" data-id="@doctor.Id">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger delete-btn" data-id="@doctor.Id">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            console.log('01');
+            // إضافة طبيب
+            $('#addDoctorForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("AddDoctor", "Admin")',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#addDoctorModal').modal('hide');
+                            toastr.success('تمت إضافة الطبيب بنجاح');
+                            location.reload();
+                        } else {
+                            toastr.error(response.message || 'حدث خطأ');
+                        }
+                    }
+                });
+            });
+
+            // فتح مودال التعديل
+            $('.edit-btn').click(function () {
+                console.log('02');
+                var id = $(this).data('id');
+                console.log('Id:' + id);
+                $.get('@Url.Action("GetDoctor", "Admin")', { id: id }, function (doctor) {
+                    console.log('03');
+                    $('#editDoctorId').val(doctor.Id);
+                    $('#editFirstName').val(doctor.FirstName);
+                    $('#editLastName').val(doctor.LastName);
+                    $('#editEmail').val(doctor.Email);
+                    $('#editDoctorModal').modal('show');
+                });
+            });
+
+            // تحديث طبيب
+            $('#editDoctorForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("UpdateDoctor", "Admin")',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#editDoctorModal').modal('hide');
+                            toastr.success('تم تحديث بيانات الطبيب');
+                            location.reload();
+                        } else {
+                            toastr.error(response.message || 'حدث خطأ');
+                        }
+                    }
+                });
+            });
+
+            // عرض تفاصيل طبيب
+            $('.view-btn').click(function () {
+                var id = $(this).data('id');
+                $.get('@Url.Action("GetDoctorDetails", "Admin")', { id: id }, function (doctor) {
+                    var content = `
+                        <p><strong>الاسم:</strong> ${doctor.FirstName} ${doctor.lastName}</p>                                                
+                        <p><strong>الإيميل:</strong> ${doctor.Email}</p>
+                        <p><strong>الحالة:</strong> ${doctor.IsActive ? 'نشط' : 'غير نشط'}</p>
+                    `;
+                    $('#doctorDetailsContent').html(content);
+                    $('#detailsDoctorModal').modal('show');
+                });
+            });
+
+            // حذف طبيب
+            $('.delete-btn').click(function () {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: 'هل أنت متأكد؟',
+                    text: 'لن تتمكن من التراجع!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم، احذف',
+                    cancelButtonText: 'إلغاء'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('@Url.Action("DeleteDoctor", "Admin")', { id: id }, function (response) {
+                            if (response.success) {
+                                toastr.success('تم حذف الطبيب');
+                                location.reload();
+                            } else {
+                                toastr.error(response.message || 'حدث خطأ أثناء الحذف');
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#doctorsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ar.json'
+                },
+                responsive: true,
+                columnDefs: [
+                    { orderable: false, targets: [0, 4] }
+                ]
+            });
+        });
+    </script>
+}

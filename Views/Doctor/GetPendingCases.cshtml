@@ -1,0 +1,55 @@
+﻿@model IEnumerable<MediAI.DTOs.PendingCaseDto>
+@inject IStringLocalizer<MediAI.Resources.Doctor.Resources> Localizer
+
+@{
+    ViewData["Title"] = Localizer["PendingCases"];
+}
+
+<div class="container-fluid p-4">
+    <h2 class="mb-4">@Localizer["PendingCases"]</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            @Localizer["NoPendingCases"]
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>@Localizer["RequestId"]</th>
+                        <th>@Localizer["PatientName"]</th>
+                        <th>@Localizer["RequestDate"]</th>
+                        <th>@Localizer["Status"]</th>
+                        <th>@Localizer["Priority"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.RequestId</td>
+                            <td>@(item.PatientName ?? Localizer["Unknown"])</td>
+                            <td>@item.RequestDate.ToString("yyyy-MM-dd")</td>
+                            <td><span class="badge bg-info text-dark">@item.Status</span></td>
+                            <td>
+                                <span class="badge @(item.Priority switch {
+                                    "Critical" => "bg-danger",
+                                    "High" => "bg-warning text-dark",
+                                    "Medium" => "bg-primary",
+                                    "Low" => "bg-secondary",
+                                    _ => "bg-light"
+                                })">
+                                    @item.Priority
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

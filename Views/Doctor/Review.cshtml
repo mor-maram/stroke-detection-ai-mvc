@@ -1,0 +1,59 @@
+﻿@model ReviewCaseViewModel
+@{
+    ViewData["Title"] = "مراجعة الحالة";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">مراجعة حالة المريض: @Model.PatientName</h2>
+
+    <div class="row mb-4">
+        @*@foreach (var img in Model.ImagePaths)
+            {
+                <div class="col-md-3 mb-2">
+                    <img src="@img" class="img-fluid rounded border" />
+                </div>
+            }*@
+        <div class="col-md-3 mb-2">
+            <img src="@Model.ImageUrl" class="img-fluid rounded border" />
+        </div>
+    </div>
+
+    @if (Model.ConfidenceLevel.HasValue)
+    {
+        <div class="mb-3">
+            <label class="form-label">نسبة الثقة من الذكاء الاصطناعي:</label>
+            <div class="progress" style="height: 20px;">
+                <div class="progress-bar bg-info" role="progressbar" style="width:@(Model.ConfidenceLevel * 100)%">
+                    @((Model.ConfidenceLevel * 100).Value.ToString("0.##"))%
+                </div>
+            </div>
+        </div>
+    }
+
+    <form asp-action="Review" method="post">
+        <input type="hidden" asp-for="DiagnosisId" />
+
+        <div class="mb-3">
+            <label class="form-label">نتيجة التشخيص</label>
+            <input asp-for="Condition" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">الوصف</label>
+            <textarea asp-for="DiagnosisDescription" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">توصيات العلاج</label>
+            <textarea asp-for="TreatmentPlan" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">ملاحظات إضافية</label>
+            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">اعتماد التشخيص</button>
+        <a asp-action="DoctorDashboard" class="btn btn-secondary">إلغاء</a>
+    </form>
+</div>

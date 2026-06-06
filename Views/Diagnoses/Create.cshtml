@@ -1,0 +1,230 @@
+﻿@model MediAI.Models.Diagnosis
+@inject IStringLocalizer<MediAI.Resources.Diagnoses.Resources> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Title"];
+}
+
+<style>
+    .image-preview {
+        width: 100%;
+        max-width: 300px;
+        height: 300px;
+        border: 2px solid #dddddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #cccccc;
+    }
+
+        .image-preview img {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow mb-4">
+                <div class="card-header text-center">
+                    <h2>@Localizer["Diagnosis_Form"]</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="RequestDescription" class="form-label">@Localizer["RequestDescription"]</label>
+                            <input asp-for="RequestDescription" class="form-control" />
+                            <span asp-validation-for="RequestDescription" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Priority" class="form-label">@Localizer["Priority"]</label>
+                            <select asp-for="Priority" class="form-select">
+                                <option value="" disabled selected>-- @Localizer["Priority"] --</option>
+                                <option value="@PriorityLevel.Low">@PriorityLevel.Low</option>
+                                <option value="@PriorityLevel.Medium">@PriorityLevel.Medium</option>
+                                <option value="@PriorityLevel.High">@PriorityLevel.High</option>
+                                <option value="@PriorityLevel.Critical">@PriorityLevel.Critical</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="Symptoms" class="form-label">@Localizer["Symptoms"]</label>
+                            <div id="Symptoms" style="min-height: 160px;"></div>
+                            <div class="invalid-feedback">@Localizer["SelectSymptoms"]</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="imageInput" class="form-label">@Localizer["UploadImage"]</label>
+                            <input type="file" id="imageInput" name="MedicalImage" accept="image/*" class="form-control">
+                            <div class="image-preview mt-2" id="imagePreview">
+                                <span>@Localizer["ImagePreview"]</span>
+                                <img src="" alt="@Localizer["ImagePreview"]" id="imageElement">
+                            </div>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <a href="javascript:void(0)" class="btn btn-secondary" onclick="uploadImage()">@Localizer["DiagnoseImage"]</a>
+                            @*<input type="submit" value="@Localizer["SaveDiagnosis"]" class="btn btn-primary ms-2" />*@
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4" id="divTestResult" style="display:none">
+                <div class="card-header bg-success text-white text-center">
+                    <h5 class="card-title" id="lblCondition">@Localizer["DiagnosisResult"]</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <strong>@Localizer["Status"]:</strong>
+                        <span id="lblStatus">...</span>
+                    </p>
+                    @*<p class="card-text">
+                        <strong>@Localizer["MedicalAdvice"]:</strong>
+                        <span id="lblAdvice">...</span>
+                    </p>*@
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="btn btn-outline-primary">@Localizer["BackToList"]</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $.getJSON('../Symptoms/GetSymptoms', function (fullResponse) {
+                $("#Symptoms").dxTagBox({
+                    dataSource: fullResponse,
+                    valueExpr: "Id",
+                    displayExpr: "Name",
+                    searchEnabled: true,
+                    placeholder: "اختر الأعراض...",
+                    rtlEnabled: true,
+                    height: 160
+                });
+            });
+        });
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const imageElement = document.getElementById('imageElement');
+
+        imageInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imageElement.src = e.target.result;
+                    imageElement.style.display = 'block';
+                    imagePreview.querySelector('span').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function uploadImage() {
+            var formData = new FormData();
+            var fileInput = $('#imageInput')[0];
+            if (fileInput.files.length === 0) {
+                alert("يرجى اختيار صورة");
+                return;
+            }
+
+            formData.append("imageInput", fileInput.files[0]);
+
+            // الأعراض (IDs)
+            const symptoms = $("#Symptoms").dxTagBox("instance").option("value");
+            for (let i = 0; i < symptoms.length; i++) {
+                formData.append(`DiagnosisSymptoms[${i}].SymptomId`, symptoms[i]);
+            }
+
+            //var symptoms = $("#Symptoms").dxTagBox("instance").option("value");
+            /*
+            var tRCSymptomsType = [];
+            for (i = 0; i < symptoms.length; i++) {
+                var row = {
+                    'CityId': symptoms[i], 'Sort': i+1,
+                };
+                tRCSymptomsType.push(row);
+            }*/
+
+            $.ajax({
+                url: '/Diagnoses/Predict', // تعديل URL إذا لزم الأمر
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log(response.Condition);
+                    $("#lblCondition").text(response.Condition);
+                    $("#lblStatus").text(response.Status);
+                    //$("#lblAdvice").text(response.MedicalAdvice);
+                    $("#divTestResult").show(300);
+                },
+                error: function (xhr) {
+                    alert("حدث خطأ أثناء تحميل الصورة: " + xhr.responseText);
+                }
+            });
+        }
+    </script>
+}
+
+@*@section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+            $(document).ready(function () {
+                $.getJSON('../Symptoms/GetSymptoms', function (fullResponse) {
+                    var response = fullResponse;
+
+                    $("#Symptoms").dxTagBox({
+                        //showMultiTagOnly: false,
+                        dataSource: response,
+                        valueExpr: "Id",
+                        displayExpr: "Name",
+                        showSelectionControls: false, // This hides checkboxes
+                        searchEnabled: true,
+                        placeholder: "Select Symptoms...",
+                        rtlEnabled: true,
+                        onValueChanged: function (e) {
+                            console.log("Selected items:", e.value);
+                        }
+                    });
+                });
+
+                //var symptoms = $("#Symptoms").dxTagBox("instance").option("value");
+                /*
+                var tRCSymptomsType = [];
+                for (i = 0; i < symptoms.length; i++) {
+                    var row = {
+                        'CityId': symptoms[i], 'Sort': i+1,
+                    };
+                    tRCSymptomsType.push(row);
+                }*/
+
+                /*
+                var cityIds = [];
+                for (var i = 0; i < subResponse.Data.length; i++) {
+                        cityIds.push(subResponse.Data[i].CityId);
+                }
+
+                $("#Symptoms").dxTagBox("instance").option("value", cityIds);
+
+                //$("#Symptoms").dxTagBox("instance").option("value",[1,2,3,4,5])
+                */
+            });
+        </script>
+    }*@

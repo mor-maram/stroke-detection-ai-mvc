@@ -1,0 +1,69 @@
+﻿@model IEnumerable<MediAI.Models.Diagnosis>
+@inject IStringLocalizer<MediAI.Resources.Patient.Resources> Localizer
+
+@if (User.IsInRole("Patient"))
+{
+    <div class="container-fluid p-3 p-md-4" id="mainContent">
+        <!-- قسم التشخيصات الحديثة -->
+        <div class="card">            
+            <div class="card-body">
+                @if (!Model.Any())
+                {
+                    <p class="text-muted">@Localizer["No_Diagnoses"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@Localizer["Request_ID"]</th>
+                                    <th>@Localizer["Status"]</th>
+                                    <th>@Localizer["Date"]</th>
+                                    <th>@Localizer["Diagnosis"]</th>
+                                    <th>@Localizer["Action"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var diagnosis in Model)
+                                {
+                                    <tr>
+                                        <td>#@diagnosis.Id</td>
+                                        <td>
+                                            <span class="status-badge @(diagnosis.Status switch {
+                                                    DiagnosisStatus.Completed => "status-completed",
+                                                    DiagnosisStatus.InProgress => "status-review",
+                                                    DiagnosisStatus.NeedsReview => "status-pending",
+                                                    DiagnosisStatus.Pending => "status-pending",
+                                                    DiagnosisStatus.Cancelled => "status-cancelled",
+                                                    _ => ""
+                                                })">
+                                                @Localizer[diagnosis.Status.ToString()]
+                                            </span>
+                                        </td>
+                                        <td>@diagnosis.RequestDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@(diagnosis.Condition ?? Localizer["Not_Specified"])</td>
+                                        <td>
+                                            <a asp-controller="Patient" asp-action="MyDiagnosisDetails" asp-route-id="@diagnosis.Id"
+                                               class="btn btn-sm btn-outline-primary">@Localizer["View_Details"]</a>
+
+                                            @if (diagnosis.Status == DiagnosisStatus.Completed && !string.IsNullOrWhiteSpace(diagnosis.DoctorId))
+                                            {
+                                                @await Html.PartialAsync("_DownloadReportPartial", diagnosis.Id)
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                @*<a asp-controller="Patient" asp-action="PatientDashboard" class="btn btn-outline-primary w-100 d-md-none mt-3">@Localizer["View_All"]</a>*@
+
+                <div class="text-center mt-3">
+                    <a asp-action="PatientDashboard" class="btn btn-outline-primary">@Localizer["Dashboard"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

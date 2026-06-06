@@ -1,0 +1,131 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+@inject IStringLocalizer<MediAI.Resources.Patient.Resources> Localizer
+<div class="auth-container">
+    <div class="card register-card shadow-lg">
+        <div class="card-header text-center py-4">
+            <i class="fas fa-user-plus fa-3x mb-3"></i>
+            <h2>@Localizer["create_new_account"]</h2>            
+        </div>
+        <div class="card-body p-4">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <!-- Basic Information -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.FirstName" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input asp-for="Input.FirstName" class="form-control" placeholder="@Localizer["first_name"]">
+                        </div>
+                        <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.LastName" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input asp-for="Input.LastName" class="form-control" placeholder="@Localizer["last_name"]">
+                        </div>
+                        <span asp-validation-for="Input.LastName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.Email" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input asp-for="Input.Email" class="form-control" placeholder="example@clinic.com">
+                        </div>
+                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input asp-for="Input.PhoneNumber" class="form-control" placeholder="05XXXXXXXX">
+                        </div>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Password Section -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input asp-for="Input.Password" class="form-control" placeholder="@Localizer["password"]">
+                            <button class="btn btn-outline-secondary toggle-password" type="button">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        <div class="form-text">@Localizer["must_be_at_least_8_characters"]</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="@Localizer["confirm_password"]">
+                        </div>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <!-- Medical Information -->
+                <div class="mb-3 patient-info">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-heartbeat me-2"></i>@Localizer["medical_information"]</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Input.DateOfBirth" class="form-label"></label>
+                            <input asp-for="Input.DateOfBirth" type="date" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms Agreement -->
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" required>
+                    <label class="form-check-label">
+                        @* لاحقاً ممكن ترجمة نص الاتفاقية أيضاً *@
+                        أوافق على <a href="#" class="text-primary">شروط الخدمة</a> و <a href="#" class="text-primary">سياسة الخصوصية</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                    <i class="fas fa-user-plus me-2"></i>@Localizer["register_account"]
+                </button>
+
+                <div class="text-center">
+                    <span>@Localizer["already_have_account"] <a href="/Account/Login" class="text-primary">Login</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function () {
+                const input = this.closest('.input-group').querySelector('input');
+                const icon = this.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
+}

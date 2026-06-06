@@ -1,0 +1,25 @@
+﻿@inject IOptions<RequestLocalizationOptions> LocOptions
+@{
+    string lang = ViewBag.lang;
+    string returnUrl = ViewContext.HttpContext.Request.Path;
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocOptions.Value.SupportedCultures
+    .Select(c => new SelectListItem
+    {
+        Value = c.Name,
+        Text = c.Name.Replace("ar", "العربية").Replace("en", "English"),
+        Selected = (c.Name == lang)
+    })
+    .ToList();
+
+    var x = cultureItems.Count;
+}
+
+<div class="nav-item dropdown">
+    <form asp-action="SetLanguage" asp-controller="Home" method="post">
+        <input type="hidden" id="returnUrl" name="returnUrl" value="@returnUrl" />
+        <select id="culture" name="culture" class="form-select" onchange="this.form.submit();"
+                asp-items="cultureItems">
+        </select>
+    </form>
+</div>

@@ -1,0 +1,89 @@
+﻿@model MediAI.ViewModels.DoctorDashboardViewModel
+@inject IStringLocalizer<MediAI.Resources.Doctor.Resources> Localizer
+
+@{
+    ViewData["Title"] = Localizer["DoctorDashboard"];
+}
+
+@if (User.IsInRole("Doctor") || true)
+{
+    <div class="container-fluid p-3 p-md-4" id="mainContent">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0 d-none d-md-block">@Localizer["CasesNeedReview"]</h4>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">@Localizer["CasesList"]</h5>
+            </div>
+            <div class="card-body">
+                @if (!Model.Diagnoses.Any())
+                {
+                    <p class="text-muted">@Localizer["NoCases"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@Localizer["CaseId"]</th>
+                                    <th class="d-none d-md-table-cell">@Localizer["Patient"]</th>
+                                    <th>@Localizer["Result"]</th>
+                                    <th class="d-none d-md-table-cell">@Localizer["Confidence"]</th>
+                                    <th>@Localizer["Action"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var diagnosis in Model.Diagnoses)
+                                {
+                                    var confidence = diagnosis.ConfidenceLevel.HasValue
+                                        ? Math.Round(diagnosis.ConfidenceLevel.Value * 100, 2)
+                                        : 0;
+
+                                    <tr>
+                                        <td>#@diagnosis.Id</td>
+                                        <td class="d-none d-md-table-cell">
+                                            <div class="d-flex align-items-center">
+                                                <span>@(diagnosis.PatientName ?? Localizer["Unknown"])</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-ai">@(diagnosis.Condition ?? Localizer["NotSet"])</span>
+                                        </td>
+                                        <td class="d-none d-md-table-cell">
+                                            @if (diagnosis.ConfidenceLevel != null)
+                                            {
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-primary"
+                                                         role="progressbar"
+                                                         style="width:@confidence.ToString(System.Globalization.CultureInfo.InvariantCulture)%"
+                                                         aria-valuenow="@confidence"
+                                                         aria-valuemin="0" aria-valuemax="100">
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">@confidence%</small>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">@Localizer["NotAvailable"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Review"
+                                               asp-controller="Doctor"
+                                               asp-route-id="@diagnosis.Id"
+                                               class="btn btn-sm btn-primary">
+                                                @Localizer["Review"]
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

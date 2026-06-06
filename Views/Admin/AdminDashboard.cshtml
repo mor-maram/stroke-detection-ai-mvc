@@ -1,0 +1,219 @@
+﻿@if (User.IsInRole("Admin"))
+{
+    @model AdminDashboardViewModel
+    @inject IStringLocalizer<MediAI.Resources.Admin.Resources> Localizer
+    @inject IStringLocalizer<MediAI.Resources.SystemLog.Resources> SystemLogLocalizer    
+        ViewData["Title"] = "Home Page";    
+    <!-- المحتوى الرئيسي -->
+    <div class="p-3 p-md-4" id="mainContent">
+        <!-- إحصائيات النظام -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card stats-card patients h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">@Localizer["TotalPatients"]</h6>
+                                <h3 class="mb-0 stats-number">@Model.TotalPatients</h3>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 p-2 p-md-3 rounded">
+                                <i class="fas fa-user-injured text-primary stats-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stats-card doctors h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">@Localizer["TotalDoctors"]</h6>
+                                <h3 class="mb-0 stats-number">@Model.TotalDoctors</h3>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-2 p-md-3 rounded">
+                                <i class="fas fa-user-md text-success stats-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stats-card requests h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">@Localizer["TotalRequests"]</h6>
+                                <h3 class="mb-0 stats-number">@Model.TotalDiagnosiss</h3>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-2 p-md-3 rounded">
+                                <i class="fas fa-file-medical text-warning stats-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- إدارة المستخدمين -->
+        <div class="card mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">@Localizer["UserManagement"]</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Localizer["Name"]</th>
+                                <th class="d-none d-md-table-cell">@Localizer["Email"]</th>
+                                <th>@Localizer["UserType"]</th>
+                                <th>@Localizer["Status"]</th>
+                                <th>@Localizer["Actions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model.LatestUsers)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://via.placeholder.com/40" alt="User" class="user-avatar me-2">
+                                            <span>@user.Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="d-none d-md-table-cell">@user.Email</td>
+                                    <td>@user.UserType</td>
+                                    <td>
+                                        @if (user.IsActive)
+                                        {
+                                            <span class="badge bg-success">@Localizer["Active"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">@Localizer["Inactive"]</span>
+                                        }
+                                    </td>
+                                    @*<td>
+                                        <button class="btn btn-sm btn-outline-primary me-1">@Localizer["Edit"]</button>
+                                        <button class="btn btn-sm btn-outline-danger">@Localizer["Delete"]</button>
+                                    </td>*@
+
+                                    <td>
+                                        <a asp-controller="UserManagement" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">
+                                        @Localizer["Edit"]</a>
+                                        <a asp-controller="UserManagement" asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('@Localizer["Confirm_Delete"]');">@Localizer["Delete"]</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- صفحات -->
+                <nav aria-label="Page navigation" class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">@Localizer["Previous"]</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">@Localizer["Next"]</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- السجلات -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="fw-bold mb-0">@Localizer["RecentActivity"]</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    @if (!Model.RecentActivities.Any())
+                    {
+                        <p class="text-muted">@Localizer["NoLogsFound"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>@Localizer["UserId"]</th>
+                                        <th>@Localizer["Action"]</th>
+                                        <th>@Localizer["Details"]</th>
+                                        <th>@Localizer["IpAddress"]</th>
+                                        <th>@Localizer["Timestamp"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var log in Model.RecentActivities)
+                                    {
+                                        <tr>
+                                            <td>@log.User?.FullName</td>
+                                            <td>@SystemLogLocalizer[log.Action]</td>
+                                            <td>@log.Details</td>
+                                            <td>@log.IPAddress</td>
+                                            <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">@Localizer["AddNewUser"]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["UserType"]</label>
+                            <select class="form-select">
+                                <option selected>@Localizer["SelectUserType"]</option>
+                                <option>@Localizer["Patient"]</option>
+                                <option>@Localizer["Doctor"]</option>
+                                <option>@Localizer["Admin"]</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["FullName"]</label>
+                            <input type="text" class="form-control" placeholder="@Localizer["EnterFullName"]">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["Email"]</label>
+                            <input type="email" class="form-control" placeholder="@Localizer["EnterEmail"]">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["Password"]</label>
+                            <input type="password" class="form-control" placeholder="@Localizer["EnterPassword"]">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">@Localizer["ConfirmPassword"]</label>
+                            <input type="password" class="form-control" placeholder="@Localizer["ConfirmPassword"]">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
+                    <button type="button" class="btn btn-primary">@Localizer["SaveUser"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

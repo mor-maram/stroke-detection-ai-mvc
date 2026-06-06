@@ -1,0 +1,102 @@
+﻿@model IEnumerable<MediAI.Models.Diagnosis>
+@inject IStringLocalizer<MediAI.Resources.Patient.Resources> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Patient_Dashboard"];
+}
+
+@if (User.IsInRole("Patient"))
+{
+    <div class="container-fluid p-3 p-md-4" id="mainContent">
+        <!-- قسم تشخيص جديد -->
+        <div class="card mb-4">
+            <div class="card-header bg-white">
+                <h5 class="fw-bold mb-0">@Localizer["New_Diagnosis"]</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="upload-box h-100">
+                            <i class="fas fa-file-image text-primary mb-3" style="font-size: 2rem;"></i>
+                            <h5>@Localizer["Upload_MRI"]</h5>
+                            <p class="text-muted mb-2">@Localizer["Upload_MRI_Instruction"]</p>
+                            <a asp-controller="Diagnoses" asp-action="Create" class="btn btn-primary btn-sm">@Localizer["Choose_File"]</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="upload-box h-100">
+                            <i class="fas fa-notes-medical text-primary mb-3" style="font-size: 2rem;"></i>
+                            <h5>@Localizer["Enter_Symptoms"]</h5>
+                            <p class="text-muted mb-2">@Localizer["Enter_Symptoms_Instruction"]</p>
+                            <a asp-controller="Diagnoses" asp-action="Create" class="btn btn-primary btn-sm">@Localizer["Start_Input"]</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم التشخيصات الحديثة -->
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">@Localizer["Recent_Diagnoses"]</h5>
+                <a asp-controller="Patient" asp-action="MyDiagnoses" class="btn btn-sm btn-outline-primary d-none d-md-block">@Localizer["View_All"]</a>
+            </div>
+            <div class="card-body">
+                @if (!Model.Any())
+                {
+                    <p class="text-muted">@Localizer["No_Diagnoses"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@Localizer["Request_ID"]</th>
+                                    <th>@Localizer["Status"]</th>
+                                    <th>@Localizer["Date"]</th>
+                                    <th>@Localizer["Diagnosis"]</th>
+                                    <th>@Localizer["Action"]</th>
+                                    @*<th>@Localizer["Action"]</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var diagnosis in Model)
+                                {
+                                    <tr>
+                                        <td>#@diagnosis.Id</td>
+                                        <td>
+                                            <span class="status-badge @(diagnosis.Status switch {
+                                                    DiagnosisStatus.Completed => "status-completed",
+                                                    DiagnosisStatus.InProgress => "status-review",
+                                                    DiagnosisStatus.NeedsReview => "status-pending",
+                                                    DiagnosisStatus.Pending => "status-pending",
+                                                    DiagnosisStatus.Cancelled => "status-cancelled",
+                                                    _ => ""
+                                                })">
+                                                @Localizer[diagnosis.Status.ToString()]
+                                            </span>
+                                        </td>
+                                        <td>@diagnosis.RequestDate.ToString("dd/MM/yyyy")</td>
+                                        <td>@(diagnosis.Condition ?? Localizer["Not_Specified"])</td>
+                                        <td>
+                                            <a asp-controller="Patient" asp-action="MyDiagnosisDetails" asp-route-id="@diagnosis.Id"
+                                               class="btn btn-sm btn-outline-primary">@Localizer["View_Details"]</a>
+
+                                            @if (diagnosis.Status==DiagnosisStatus.Completed && !string.IsNullOrWhiteSpace(diagnosis.DoctorId))
+                                            {
+                                                @await Html.PartialAsync("_DownloadReportPartial", diagnosis.Id)
+                                            }
+                                        </td>
+                                        
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                @*<a asp-controller="Diagnoses" asp-action="Index" class="btn btn-outline-primary w-100 d-md-none mt-3">@Localizer["View_All"]</a>*@
+            </div>
+        </div>
+    </div>
+}
