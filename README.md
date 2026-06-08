@@ -1,8 +1,9 @@
 # 🧠 MediAI: Deep Learning & AI-Powered Early Stroke Detection System
 
 <p align="center">
-  <img src="wwwroot/favicon.ico" alt="MediAI Logo" width="80" height="80">
+  <img src="https://flaticon.com" alt="MediAI Logo" width="100" height="100">
 </p>
+
 
 <p align="center">
   <strong>An advanced Clinical Decision Support System (CDSS) developed during specialized training at KAUST Academy, leveraging Convolutional Neural Networks (CNN) for real-time stroke classification from brain CT images.</strong>
