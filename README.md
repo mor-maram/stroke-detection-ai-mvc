@@ -68,6 +68,16 @@ Following a comprehensive training setup lasting `100 Epochs` via the **Adam Opt
 
 ---
 
+## 🔄 System Architecture & Workflow Pipeline
+The following architectural diagram illustrates the end-to-end data lifecycle and execution pipeline of the system—from secure user authentication to AI analysis and medical report generation:
+
+<p align="center">
+  <img src="uploads/workflow.png" alt="MediAI System Workflow Architecture" width="850">
+  <br>
+  <em>Figure 3: High-level architectural flowchart showing user ingestion (MRI/Symptoms), AI inference nodes, database logging, dashboard monitoring, and multi-format reporting output (Excel/Word/PDF).</em>
+</p>
+---
+
 ## 📂 Enterprise Repository Code Breakdown
 The application pipeline separates backend computational nodes and server views using **ASP.NET Core MVC**:
 
