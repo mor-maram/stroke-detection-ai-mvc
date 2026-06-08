@@ -1,17 +1,16 @@
 # 🧠 MediAI: Deep Learning & AI-Powered Early Stroke Detection System
 
 <p align="center">
-  <img src="https://flaticon.com" alt="MediAI Logo" width="100" height="100">
+  <img src="https://wikimedia.org" alt="MediAI Logo" width="100" height="100">
 </p>
 
 <p align="center">
-  <strong>An advanced Clinical Decision Support System (CDSS) developed during specialized training at KAUST Academy, leveraging Convolutional Neural Networks (CNN) for real-time stroke classification from brain CT images.</strong>
+  <strong>An advanced Clinical Decision Support System (CDSS) leveraging Convolutional Neural Networks (CNN) for real-time stroke classification from brain CT images.</strong>
 </p>
 
 <p align="center">
   <img src="https://shields.io" alt=".NET 8">
   <img src="https://shields.io" alt="TensorFlow">
-  <img src="https://shields.io" alt="KAUST">
   <img src="https://shields.io" alt="MIT License">
 </p>
 
@@ -56,6 +55,7 @@ The custom **Convolutional Neural Network (CNN)** model is trained on the Kaggle
 
 ### 🔬 Neural Network Performance Evaluation
 Following a comprehensive training setup lasting `100 Epochs` via the **Adam Optimizer** on `224x224x3` image shapes, the model achieved the following outstanding performance metrics:
+
 
 
 
@@ -121,5 +121,4 @@ The application pipeline separates backend computational nodes and server views 
 ---
 
 ## 📄 Intellectual Property License
-Distributed via the **MIT Open-Source License**. Built with pride as an engineering milestone during deep training with **KAUST Academy**.
-Distributed via the **MIT Open-Source License**. Built with pride as an engineering milestone during deep training with **KAUST Academy**.
+Distributed via the **MIT Open-Source License**. Built with pride as an independent engineering milestone.
