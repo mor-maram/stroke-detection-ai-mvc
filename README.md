@@ -1,18 +1,11 @@
 # 🧠 MediAI: Deep Learning & AI-Powered Early Stroke Detection System
 
-<p align="center">
-  <img src="https://wikimedia.org" alt="MediAI Logo" width="100" height="100">
-</p>
+> **An advanced Clinical Decision Support System (CDSS) leveraging Convolutional Neural Networks (CNN) for real-time stroke classification from brain CT images.**
 
-<p align="center">
-  <strong>An advanced Clinical Decision Support System (CDSS) leveraging Convolutional Neural Networks (CNN) for real-time stroke classification from brain CT images.</strong>
-</p>
-
-<p align="center">
-  <img src="https://shields.io" alt=".NET 8">
-  <img src="https://shields.io" alt="TensorFlow">
-  <img src="https://shields.io" alt="MIT License">
-</p>
+### 🛠️ Core Technologies
+* 🔹 **Backend Framework:** .NET 8.0 (ASP.NET Core MVC)
+* 🔸 **AI Framework:** TensorFlow 2.x / Keras (CNN Architecture)
+* 🔹 **Project License:** MIT License
 
 ---
 
