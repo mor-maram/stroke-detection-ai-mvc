@@ -4,48 +4,59 @@
   <img src="https://flaticon.com" alt="MediAI Logo" width="100" height="100">
 </p>
 
-
 <p align="center">
   <strong>An advanced Clinical Decision Support System (CDSS) developed during specialized training at KAUST Academy, leveraging Convolutional Neural Networks (CNN) for real-time stroke classification from brain CT images.</strong>
 </p>
 
 <p align="center">
-  <a href="https://microsoft.com"><img src="https://shields.io" alt=".NET 8"></a>
-  <a href="https://tensorflow.org"><img src="https://shields.io" alt="TensorFlow"></a>
-  <a href="https://kaust.edu.sa"><img src="https://shields.io" alt="KAUST"></a>
-  <a href="https://opensource.org"><img src="https://shields.io" alt="MIT License"></a>
+  <img src="https://shields.io" alt=".NET 8">
+  <img src="https://shields.io" alt="TensorFlow">
+  <img src="https://shields.io" alt="KAUST">
+  <img src="https://shields.io" alt="MIT License">
 </p>
 
 ---
 
 ## 🔗 Project Resources & Deployment Status
 * 💻 **Deployment Status:** Currently running in a **Local Development Environment** (`localhost`) integrated via ASP.NET Core MVC.
-* 📂 **Official Training Dataset Resource:** [Brain Stroke Prediction CT Scan Image Dataset (Kaggle)](https://www.kaggle.com/datasets/alymaher/brain-stroke-ct-scan-image)
+* 📂 **Official Training Dataset Resource:** [Brain Stroke Prediction CT Scan Image Dataset (Kaggle)](https://kaggle.com)
 
 ---
 
 ## 🚀 Key Features & Capabilities
 * **Instant Risk Assessment**: Evaluates brain CT slices and extracts risk classification tokens in real-time.
-* **High-Accuracy Screening**: Uses deep visual layer extraction optimized to reach exceptional diagnostic metrics.
+* **Clinical Metrics Tracking**: Supports multi-selection of patient symptoms, severity flags, and case indexing.
 * **Secure Medical Identity**: Role-based access control (RBAC) powered by ASP.NET Identity to isolate patient clinical records.
 * **Production-Ready Architecture**: Fully synchronized execution bridging the Python AI weight files with the .NET Core web engine.
 
 ---
 
+## 🖥️ Medical Application User Interface
+The system features a dynamic responsive dashboard tailored for clinical operators to log cases and execute instant AI screenings:
+
+<p align="center">
+  <img src="uploads/brain_stroke.png" alt="MediAI Case Diagnosis Dashboard" width="750">
+  <br>
+  <em>Figure 1: Comprehensive clinical workspace exhibiting symptom tags, priority tiers, radiology ingestion, and target prediction flags.</em>
+</p>
+
+---
+
 ## 📊 Dataset & AI Model Deep Dive
-The integrated classification core interprets spatial pixel grids to extract geometric signs of cerebral hemorrhage or ischemic damage.
+The integrated classification core interprets spatial pixel grids to extract geometric signs of cerebral injury.
 
 ### 📈 Clinical Data Analytics & Architecture
 The custom **Convolutional Neural Network (CNN)** model is trained on the Kaggle multi-class dataset containing specialized brain CT slices categorized under clinical conditions (Normal, Ischemia, and Bleeding).
 
 <p align="center">
-  <img src="uploads/dataset-analytics.png" alt="Clinical Dataset Distribution Analytics" width="700">
+  <img src="uploads/dataset.png" alt="Clinical Dataset Distribution Analytics" width="700">
   <br>
-  <em>Figure 1: Visual mapping of categorical distributions and imaging data features used during network optimization.</em>
+  <em>Figure 2: Visual mapping of categorical distributions and imaging data features used during network optimization.</em>
 </p>
 
 ### 🔬 Neural Network Performance Evaluation
 Following a comprehensive training setup lasting `100 Epochs` via the **Adam Optimizer** on `224x224x3` image shapes, the model achieved the following outstanding performance metrics:
+
 
 
 | Metric Type | Score Performance | Clinical Meaning |
@@ -54,17 +65,6 @@ Following a comprehensive training setup lasting `100 Epochs` via the **Adam Opt
 | **Precision** | `98.10%` | Precision index determining false positive clinical rates. |
 | **Recall / Sensitivity** | `98.50%` | Crucial clinical indicator for successfully flagging active stroke vectors. |
 | **F1-Score** | `98.30%` | Harmonic calculation combining general precision and recall models. |
-
----
-
-## 🖥️ Medical Application User Interface
-The UI workspace translates complicated matrix computations into easy-to-read clinical indicators:
-
-<p align="center">
-  <img src="uploads/dashboard-preview.png" alt="MediAI Dashboard Interface View" width="800">
-  <br>
-  <em>Figure 2: Clinical Web UI displaying image ingestion portals, diagnostic telemetry logs, and prediction tracking panels.</em>
-</p>
 
 ---
 
@@ -121,4 +121,5 @@ The application pipeline separates backend computational nodes and server views 
 ---
 
 ## 📄 Intellectual Property License
+Distributed via the **MIT Open-Source License**. Built with pride as an engineering milestone during deep training with **KAUST Academy**.
 Distributed via the **MIT Open-Source License**. Built with pride as an engineering milestone during deep training with **KAUST Academy**.
